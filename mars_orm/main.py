@@ -17,19 +17,19 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/mars_explorer.sqlite")
-    user = User()
-    user.surname = "Scott"
-    user.name = "Ridley"
-    user.age = 21
-    user.position = "captain"
-    user.speciality = "research engineer"
-    user.address = "module_1"
-    user.email = "scott_chief@mars.org"
-    user.hashed_password = "cap"
-    user.set_password(user.hashed_password)
-    session = db_session.create_session()
-    session.add(user)
-    session.commit()
+    # user = User()
+    # user.surname = "Scott"
+    # user.name = "Ridley"
+    # user.age = 21
+    # user.position = "captain"
+    # user.speciality = "research engineer"
+    # user.address = "module_1"
+    # user.email = "scott_chief@mars.org"
+    # user.hashed_password = "cap"
+    # user.set_password(user.hashed_password)
+    # session = db_session.create_session()
+    # session.add(user)
+    # session.commit()
 
     # user = User()
     # user.surname = "Sun"
@@ -55,6 +55,7 @@ def main():
 
     app.run()
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -65,6 +66,7 @@ def index():
         print(jobs)
     session.commit()
     return render_template('index.html', jobs=jobs)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
