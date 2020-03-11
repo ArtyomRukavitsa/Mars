@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, request, make_response, session
+from flask import Flask, render_template, redirect, jsonify, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user
 from loginform import LoginForm, JobsForm
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
+import jobs_api
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -17,8 +18,14 @@ def load_user(user_id):
     return session.query(User).get(user_id)
 
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
 def main():
     db_session.global_init("db/mars_explorer.sqlite")
+    app.register_blueprint(jobs_api.blueprint)
     # user = User()
     # user.surname = "Scott"
     # user.name = "Ridley"
