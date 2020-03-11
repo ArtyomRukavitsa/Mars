@@ -65,7 +65,7 @@ def index():
     jobs = []
     for user in session.query(Jobs).all():
         jobs.append(user)
-        print(jobs)
+        # print(jobs)
     session.commit()
     return render_template('index.html', jobs=jobs)
 
@@ -89,7 +89,16 @@ def login():
 def addjob():
     form = JobsForm()
     if form.validate_on_submit():
-        if session:
+        if form.validate_on_submit():
+            session = db_session.create_session()
+            job = Jobs()
+            job.team_leader = form.team_leader.data
+            job.job = form.job.data
+            job.work_size = form.work_size.data
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.is_finished.data
+            session.add(job)
+            session.commit()
             return redirect("/")
         return redirect('/logout')
     return render_template('addjob.html', title='Добавление работы', form=form)
