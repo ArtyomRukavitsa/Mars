@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, request, make_response, session
-from flask_login import LoginManager, login_user
-from loginform import LoginForm
+from flask_login import LoginManager, login_user, login_required, logout_user
+from loginform import LoginForm, JobsForm
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
@@ -10,10 +10,12 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
     return session.query(User).get(user_id)
+
 
 def main():
     db_session.global_init("db/mars_explorer.sqlite")
@@ -81,6 +83,24 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/addjob', methods=['GET', 'POST'])
+def addjob():
+    form = JobsForm()
+    if form.validate_on_submit():
+        if session:
+            return redirect("/")
+        return redirect('/logout')
+    return render_template('addjob.html', title='Добавление работы', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
 
 if __name__ == '__main__':
     main()
