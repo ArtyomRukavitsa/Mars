@@ -1,12 +1,15 @@
 from flask import Flask, render_template, redirect, jsonify, make_response
 from flask_login import LoginManager, login_user, login_required, logout_user
-from loginform import LoginForm, JobsForm
+from loginform import LoginForm, JobsForm, RegisterForm
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
-import jobs_api
+from data.users_resource import UsersListResource, UserResource
+from flask_restful import Api
+# import jobs_api для REST-API v1
 
 app = Flask(__name__)
+api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -25,7 +28,14 @@ def not_found(error):
 
 def main():
     db_session.global_init("db/mars_explorer.sqlite")
-    app.register_blueprint(jobs_api.blueprint)
+    # app.register_blueprint(jobs_api.blueprint) Строчка для добавления REST-API из урока 1
+
+    # для списка объектов
+    api.add_resource(UsersListResource, '/api/v2/users')
+
+    # для одного объекта
+    api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
+
     # user = User()
     # user.surname = "Scott"
     # user.name = "Ridley"
@@ -109,6 +119,36 @@ def addjob():
             return redirect("/")
         return redirect('/logout')
     return render_template('addjob.html', title='Добавление работы', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def reqister():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Пароли не совпадают")
+        session = db_session.create_session()
+        if session.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message="Такой пользователь уже есть")
+        user = User(
+            name=form.name.data,
+            surname=form.surname.data,
+            email=form.email.data,
+            hashed_password=form.password.data,
+            age=form.age.data,
+            speciality=form.speciality.data,
+            address=form.address.data,
+            position=form.position.data
+        )
+        user.set_password(form.password.data)
+        session.add(user)
+        session.commit()
+        return redirect('/login')
+    return render_template('register.html', title='Регистрация', form=form)
 
 
 @app.route('/logout')
