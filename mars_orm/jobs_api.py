@@ -60,11 +60,43 @@ def create_news():
 
 
 @blueprint.route('/api/jobs/<int:jobs_id>', methods=['DELETE'])
-def delete_news(jobs_id):
+def delete_jobs(jobs_id):
     session = db_session.create_session()
     jobs = session.query(Jobs).get(jobs_id)
     if not jobs:
         return jsonify({'error': 'Not found'})
     session.delete(jobs)
+    session.commit()
+    return jsonify({'success': 'OK'})
+
+
+@blueprint.route('/api/jobs/<int:jobs_id>', methods=['PATCH'])
+def change_jobs(jobs_id):
+    if not request.json:
+        return jsonify({'error': 'Empty request'})
+    session = db_session.create_session()
+    job = session.query(Jobs).get(jobs_id)
+    if not job:
+        return jsonify({'error': 'Not found'})
+    try:
+        if request.json['job']: job.job = request.json['job']
+    except KeyError:
+        pass
+    try:
+        if request.json['collaborators']: job.collaborators = request.json['collaborators']
+    except KeyError:
+        pass
+    try:
+        if request.json['team_leader']: job.team_leader = request.json['team_leader']
+    except KeyError:
+        pass
+    try:
+        if request.json['work_size']: job.work_size = request.json['work_size']
+    except KeyError:
+        pass
+    try:
+        if request.json['is_finished']: job.job = request.json['is_finished']
+    except KeyError:
+        pass
     session.commit()
     return jsonify({'success': 'OK'})

@@ -4,12 +4,11 @@ from loginform import LoginForm, JobsForm, RegisterForm
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
-from data.users_resource import UsersListResource, UserResource
-from flask_restful import Api
-# import jobs_api для REST-API v1
+import jobs_api
+import users_api
 
 app = Flask(__name__)
-api = Api(app)
+# api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -28,50 +27,8 @@ def not_found(error):
 
 def main():
     db_session.global_init("db/mars_explorer.sqlite")
-    # app.register_blueprint(jobs_api.blueprint) Строчка для добавления REST-API из урока 1
-
-    # для списка объектов
-    api.add_resource(UsersListResource, '/api/v2/users')
-
-    # для одного объекта
-    api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
-
-    # user = User()
-    # user.surname = "Scott"
-    # user.name = "Ridley"
-    # user.age = 21
-    # user.position = "captain"
-    # user.speciality = "research engineer"
-    # user.address = "module_1"
-    # user.email = "scott_chief@mars.org"
-    # user.hashed_password = "cap"
-    # user.set_password(user.hashed_password)
-    # session = db_session.create_session()
-    # session.add(user)
-    # session.commit()
-
-    # user = User()
-    # user.surname = "Sun"
-    # user.name = "Rules"
-    # user.age = 34
-    # user.position = "marsohod"
-    # user.speciality = "engineer"
-    # user.address = "module_2"
-    # user.email = "sun_chief@mars.org"
-    # user.hashed_password = "mars"
-    # session = db_session.create_session()
-    # session.add(user)
-    # session.commit()
-    #
-    # jobs = Jobs()
-    # jobs.team_leader = 1
-    # jobs.job = 'deployment of residential modules 1 and 2'
-    # jobs.work_size = 15
-    # jobs.collaborators = '2, 3'
-    # session = db_session.create_session()
-    # session.add(jobs)
-    # session.commit()
-
+    app.register_blueprint(jobs_api.blueprint)  # Строчка для добавления REST-API из урока 1
+    app.register_blueprint(users_api.blueprint)
     app.run()
 
 
