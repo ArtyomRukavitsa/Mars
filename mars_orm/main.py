@@ -4,11 +4,15 @@ from loginform import LoginForm, JobsForm, RegisterForm
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
+from flask_restful import Api
+from data.jobs_resource import JobsResource, JobsListResource
+from data.users_resource import UserResource, UsersListResource
 import jobs_api
 import users_api
 
+
 app = Flask(__name__)
-# api = Api(app)
+api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -29,6 +33,10 @@ def main():
     db_session.global_init("db/mars_explorer.sqlite")
     app.register_blueprint(jobs_api.blueprint)  # Строчка для добавления REST-API из урока 1
     app.register_blueprint(users_api.blueprint)
+    api.add_resource(JobsListResource, '/api/v2/jobs')
+    api.add_resource(JobsResource, '/api/v2/jobs/<int:job_id>')
+    api.add_resource(UsersListResource, '/api/v2/users')
+    api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
     app.run()
 
 
@@ -36,12 +44,13 @@ def main():
 @app.route('/index')
 def index():
     session = db_session.create_session()
-    jobs = []
-    for user in session.query(Jobs).all():
-        jobs.append(user)
-        # print(jobs)
-    session.commit()
-    return render_template('index.html', jobs=jobs)
+    jobs = session.query(Jobs)
+    name, surname = [], []
+    for job in jobs:
+        for el in session.query(User).filter_by(id=job.team_leader):
+            name.append(el.name)
+            surname.append(el.surname)
+    return render_template("index.html", jobs=jobs, name=name, surname=surname)
 
 
 @app.route('/login', methods=['GET', 'POST'])
