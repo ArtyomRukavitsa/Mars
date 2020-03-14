@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from data import db_session
 from data.users import User
 import datetime
+import requests
 
 blueprint = Blueprint('users_api', __name__,
                             template_folder='templates')
@@ -116,3 +117,29 @@ def change_user(user_id):
         pass
     session.commit()
     return jsonify({'success': 'OK'})
+
+
+@blueprint.route('/api/users_show/<int:user_id>', methods=['GET'])
+def users_show(user_id):
+    session = db_session.create_session()
+    user = session.query(User).get(user_id)
+    if not user:
+        return jsonify({'error': 'Not found'})
+
+    req = "http://geocode-maps.yandex.ru/1.x/" \
+          "?apikey=40d1649f-0493-4b70-98ba-98533de7710b" \
+          "&geocode={}&format=json".format(user.city_from)
+
+    response = requests.get(req)
+
+    if response:
+        json_response = response.json()
+        toponym = json_response["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]
+        toponym_coodrinates = ','.join(toponym["Point"]["pos"].split())
+
+        return render_template('users_show.html',
+                               name=user.name,
+                               surname=user.surname,
+                               hometown=user.city_from,
+                               ll=toponym_coodrinates)
+    return jsonify({'error': 'Not found'})
