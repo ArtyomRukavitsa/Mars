@@ -8,7 +8,7 @@ blueprint = Blueprint('users_api', __name__,
 
 
 @blueprint.route('/api/users', methods=['GET'])
-def get_job():
+def get_users():
     session = db_session.create_session()
     users = session.query(User).all()
     return jsonify(
@@ -19,7 +19,7 @@ def get_job():
 
 
 @blueprint.route('/api/users/<int:user_id>', methods=['GET'])
-def get_one_job(user_id):
+def get_one_user(user_id):
     session = db_session.create_session()
     user = session.query(User).get(user_id)
     if not user:
@@ -32,7 +32,7 @@ def get_one_job(user_id):
 
 
 @blueprint.route('/api/users', methods=['POST'])
-def create_news():
+def create_user():
     if not request.json:
         return jsonify({'error': 'Empty request'})
     elif not all(key in request.json for key in
@@ -62,7 +62,7 @@ def create_news():
 
 
 @blueprint.route('/api/users/<int:user_id>', methods=['DELETE'])
-def delete_jobs(user_id):
+def delete_user(user_id):
     session = db_session.create_session()
     user = session.query(User).get(user_id)
     if not user:
@@ -73,7 +73,7 @@ def delete_jobs(user_id):
 
 
 @blueprint.route('/api/users/<int:user_id>', methods=['PATCH'])
-def change_jobs(user_id):
+def change_user(user_id):
     if not request.json:
         return jsonify({'error': 'Empty request'})
     session = db_session.create_session()
