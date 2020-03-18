@@ -1,1 +1,1 @@
-web: gunicorn main_heroku:app
+web: gunicorn mars_orm/main:app
