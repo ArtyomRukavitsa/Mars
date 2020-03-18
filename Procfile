@@ -1,1 +1,1 @@
-web: python mars_orm/main.py
+web: gunicorn main_heroku:app
