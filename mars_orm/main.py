@@ -1,5 +1,5 @@
-from flask import Flask, render_template, redirect, jsonify, make_response, request, abort
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask import Flask, render_template, redirect, jsonify, make_response
+from flask_login import LoginManager, login_user, login_required, logout_user
 from loginform import LoginForm, JobsForm, RegisterForm
 from data import db_session
 from data.users import User
@@ -31,12 +31,12 @@ def not_found(error):
 
 def main():
     db_session.global_init("db/mars_explorer.sqlite")
-    # app.register_blueprint(jobs_api.blueprint)  # Строчка для добавления REST-API из урока 1
-    # app.register_blueprint(users_api.blueprint)
-    # api.add_resource(JobsListResource, '/api/v2/jobs')
-    # api.add_resource(JobsResource, '/api/v2/jobs/<int:job_id>')
-    # api.add_resource(UsersListResource, '/api/v2/users')
-    # api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
+    app.register_blueprint(jobs_api.blueprint)  # Строчка для добавления REST-API из урока 1
+    app.register_blueprint(users_api.blueprint)
+    api.add_resource(JobsListResource, '/api/v2/jobs')
+    api.add_resource(JobsResource, '/api/v2/jobs/<int:job_id>')
+    api.add_resource(UsersListResource, '/api/v2/users')
+    api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
     app.run()
 
 
@@ -85,53 +85,6 @@ def addjob():
             return redirect("/")
         return redirect('/logout')
     return render_template('addjob.html', title='Добавление работы', form=form)
-
-
-@app.route('/jobs/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_job(id):
-    form = JobsForm()
-    if request.method == "GET":
-        session = db_session.create_session()
-        job = session.query(Jobs).filter(Jobs.id == id,
-                                          (Jobs.team_leader == current_user.id)|(current_user.id == 1)).first()
-        if job:
-            form.team_leader.data = job.team_leader
-            form.job.data = job.job
-            form.work_size.data = job.work_size
-            form.collaborators.data = job.collaborators
-            form.is_finished.data = job.is_finished
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        session = db_session.create_session()
-        job = session.query(Jobs).filter(Jobs.id == id,
-                                          (Jobs.team_leader == current_user.id)|(current_user.id == 1)).first()
-        if job:
-            job.team_leader = form.team_leader.data
-            job.job = form.job.data
-            job.work_size = form.work_size.data
-            job.collaborators = form.collaborators.data
-            job.is_finished = form.is_finished.data
-            session.commit()
-            return redirect('/')
-        else:
-            abort(404)
-    return render_template('addjob.html', title='Редактирование работы', form=form)
-
-
-@app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def job_delete(id):
-    session = db_session.create_session()
-    job = session.query(Jobs).filter(Jobs.id == id,
-                                      (Jobs.team_leader == current_user.id)|(current_user.id == 1)).first()
-    if job:
-        session.delete(job)
-        session.commit()
-    else:
-        abort(404)
-    return redirect('/')
 
 
 @app.route('/register', methods=['GET', 'POST'])
