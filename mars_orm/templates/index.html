@@ -2,6 +2,9 @@
 
 {% block content %}
 <h2 align="center">Works log</h2>
+{% if current_user.is_authenticated %}
+    <a href="addjob" class="btn btn-secondary">Add job</a>
+{% endif %}
 {% for item in jobs %}
 <h3>Action # {{ loop.index }}</h3>
 <div class="col-md6 border rounded">
@@ -16,11 +19,21 @@
       <tr>
         <td class="table-info">{{ item.job }}</td>
           <td class="table-info">{{ name[loop.index0] }} {{ surname[loop.index0] }}</td>
-          <td class="table-info">{{ item.work_size }}</td>
+          <td class="table-info">{{ item.work_size }} hours</td>
           <td class="table-info">{{ item.collaborators }}</td>
-          <td class="table-danger">{% if item.is_finished %} Is not finished {% else %} Is finished {% endif %}</td>
+          {% if item.is_finished %}
+          <td class="table-success"> Is finished</td>
+          {% else %}
+          <td class="table-danger"> Is not finished</td>
+          {% endif %}
       </tr>
     </table>
+    {% if current_user.is_authenticated and (current_user == item.user or current_user.id == 1) %}
+    <div>
+        <a href="/jobs/{{ item.id }}" class="btn btn-warning">Edit job</a>
+        <a href="/jobs_delete/{{ item.id }}" class="btn btn-danger">Delete job</a>
+    </div>
+{% endif %}
 </div>
 <p>
 {% endfor %}

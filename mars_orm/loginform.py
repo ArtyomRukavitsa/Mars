@@ -18,8 +18,8 @@ class JobsForm(FlaskForm):
     collaborators = StringField('Список id участников', validators=[DataRequired()])
     start_date = DateField('Время начала работы', default=datetime.datetime.now)
     end_date = DateField('Время конца работы', default=datetime.datetime.now)
-    is_finished = BooleanField('Статус', default=False)
-    submit = SubmitField('Войти')
+    is_finished = BooleanField('Работа завершена', default=False)
+    submit = SubmitField('Добавить')
 
 
 class RegisterForm(FlaskForm):
