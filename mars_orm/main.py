@@ -10,7 +10,6 @@ from data.users_resource import UserResource, UsersListResource
 import jobs_api
 import users_api
 
-
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
