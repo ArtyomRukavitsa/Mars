@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 align="center">Пейзажи Марса</h1>
+<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel" data-interval="250">
+<div class="carousel-inner">
+    {% for a in featuredStory %}
+
+        <div class="carousel-item {% if loop.index == 1%}active {% endif %}">
+          <img class="d-block w-100" src="{{ a }}" alt="First slide">
+        </div>
+        {% endfor %}
+</div>
+</div>
+
+<form class="login_form" method="post" enctype="multipart/form-data">
+       <div class="form-group">
+            <label for="photo">Добавить картинку</label>
+            <input type="file" class="form-control-file" id="photo" name="file">
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+{% endblock %}
