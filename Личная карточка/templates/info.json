@@ -1,0 +1,25 @@
+{
+  "info":
+  [
+    {
+      "name": "Энди Уир",
+      "photo": "/static/img/baby.jpg",
+      "profession": "астрогеолог, специалист по радиационной защите"
+    },
+    {
+      "name": "Альберт Эйнштейн",
+      "photo": "/static/img/adult.png",
+      "profession": "физик-теоретик"
+    },
+    {
+      "name": "Марк Цукерберг",
+      "photo": "/static/img/mark.jpg",
+      "profession": "программист"
+    },
+    {
+      "name": "Билл Гейтс",
+      "photo": "/static/img/bill.jpg",
+      "profession": "астролог"
+    }
+  ]
+}
