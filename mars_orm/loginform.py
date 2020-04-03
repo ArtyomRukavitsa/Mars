@@ -33,3 +33,11 @@ class RegisterForm(FlaskForm):
     speciality = StringField("Ваша специальность", validators=[DataRequired()])
     address = StringField("Ваш адрес", validators=[DataRequired()])
     submit = SubmitField('Зарегитрироваться')
+
+
+class DepartmentForm(FlaskForm):
+    title = StringField('Название департамента', validators=[DataRequired()])
+    chief = IntegerField('id шеф', validators=[DataRequired()])
+    members = StringField('Список id участников', validators=[DataRequired()])
+    email = StringField('Почта', validators=[DataRequired()])
+    submit = SubmitField('Добавить')

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 align="center">List of Departments</h2>
+{% if current_user.is_authenticated %}
+    <a href="index" class="btn btn-secondary">To jobs</a>
+    <a href="adddepartment" class="btn btn-secondary">Add department</a>
+{% endif %}
+{% for item in departments %}
+<h3>Department # {{ loop.index }}</h3>
+<div class="col-md6 border rounded">
+    <table class="table">
+        <tr>
+            <td class="table-active">Title of department</td>
+            <td class="table-active">Chief</td>
+            <td class="table-active">Members</td>
+            <td class="table-active">Email</td>
+        </tr>
+      <tr>
+        <td class="table-info">{{ item.title }}</td>
+          <td class="table-info">{{ name[loop.index0] }} {{ surname[loop.index0] }}</td>
+          <td class="table-info">{{ item.members }}</td>
+          <td class="table-info">{{ item.email }}</td>
+      </tr>
+    </table>
+    {% if current_user.is_authenticated and (current_user.id == item.chief or current_user.id == 1) %}
+    <div>
+        <a href="/departments/{{ item.id }}" class="btn btn-warning">Edit department</a>
+        <a href="/departments_delete/{{ item.id }}" class="btn btn-danger">Delete department</a>
+    </div>
+{% endif %}
+</div>
+<p>
+{% endfor %}
+{% endblock %}

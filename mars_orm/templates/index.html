@@ -4,6 +4,7 @@
 <h2 align="center">Works log</h2>
 {% if current_user.is_authenticated %}
     <a href="addjob" class="btn btn-secondary">Add job</a>
+    <a href="departments" class="btn btn-secondary">To departments</a>
 {% endif %}
 {% for item in jobs %}
 <h3>Action # {{ loop.index }}</h3>
