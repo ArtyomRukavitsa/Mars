@@ -15,6 +15,7 @@
             <td class="table-active">Team leader</td>
             <td class="table-active">Duration</td>
             <td class="table-active">List of collaborators</td>
+            <td class="table-active">Hazard category</td>
             <td class="table-active">Is finished</td>
         </tr>
       <tr>
@@ -22,6 +23,7 @@
           <td class="table-info">{{ name[loop.index0] }} {{ surname[loop.index0] }}</td>
           <td class="table-info">{{ item.work_size }} hours</td>
           <td class="table-info">{{ item.collaborators }}</td>
+          <td class="table-info">{{ category[loop.index0] }}</td>
           {% if item.is_finished %}
           <td class="table-success"> Is finished</td>
           {% else %}

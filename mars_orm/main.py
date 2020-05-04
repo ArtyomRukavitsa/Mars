@@ -5,6 +5,7 @@ from data import db_session
 from data.users import User
 from data.jobs import Jobs
 from data.departments import Departments
+from data.hazard import Hazard
 from flask_restful import Api
 from data.jobs_resource import JobsResource, JobsListResource
 from data.users_resource import UserResource, UsersListResource
@@ -45,12 +46,13 @@ def main():
 def index():
     session = db_session.create_session()
     jobs = session.query(Jobs)
-    name, surname = [], []
+    name, surname, category = [], [], []
     for job in jobs:
         for el in session.query(User).filter_by(id=job.team_leader):
             name.append(el.name)
             surname.append(el.surname)
-    return render_template("index.html", jobs=jobs, name=name, surname=surname)
+        category.append(job.categories[0].id)
+    return render_template("index.html", jobs=jobs, name=name, surname=surname, category=category)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -79,6 +81,7 @@ def addjob():
             job.job = form.job.data
             job.work_size = form.work_size.data
             job.collaborators = form.collaborators.data
+            job.categories.append(session.query(Hazard).filter(Hazard.id == form.hazard.data).first())
             job.is_finished = form.is_finished.data
             session.add(job)
             session.commit()
@@ -100,6 +103,7 @@ def edit_job(id):
             form.job.data = job.job
             form.work_size.data = job.work_size
             form.collaborators.data = job.collaborators
+            form.hazard.data = job.categories[0].id
             form.is_finished.data = job.is_finished
         else:
             abort(404)
@@ -112,6 +116,8 @@ def edit_job(id):
             job.job = form.job.data
             job.work_size = form.work_size.data
             job.collaborators = form.collaborators.data
+            job.categories.remove(job.categories[0])
+            job.categories.append(session.query(Hazard).filter(Hazard.id == form.hazard.data).first())
             job.is_finished = form.is_finished.data
             session.commit()
             return redirect('/')

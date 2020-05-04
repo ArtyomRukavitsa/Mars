@@ -22,3 +22,7 @@ class Jobs(SqlAlchemyBase, UserMixin, SerializerMixin):
                                    default=datetime.datetime.now)
     end_date = sqlalchemy.Column(sqlalchemy.DateTime)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+    # hazard_category = sqlalchemy.Column(sqlalchemy.Integer)
+    categories = orm.relation("Hazard",
+                              secondary="jobs_to_hazard",
+                              backref="jobs")
